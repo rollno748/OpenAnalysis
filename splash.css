@@ -1,0 +1,52 @@
+html,
+body {
+  margin: 0 auto;
+  height: 100%;
+}
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+.load {
+  margin: 0 auto;
+  min-height: 100%;
+  width: 100%;
+  background: black;
+}
+
+.term {
+  font-family: monospace;
+  color: #fff;
+  opacity: 0.8;
+  font-size: 1.1em;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: 10px;
+  padding-left: 20px;
+}
+
+.term:after {
+  content: "_";
+  opacity: 1;
+  animation: cursor 1s infinite;
+}
+
+@keyframes cursor {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
