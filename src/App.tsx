@@ -1,11 +1,17 @@
 import nodeLogo from './assets/node.svg'
 import { useState } from 'react'
 import './assets/scss/App.scss'
+import uploadFile from './components/upload/Upload'
 
+
+
+const filename = 'C:\\workspace\\jmeter\\LATAM\\Merged\\Results\\Test3\\test3_baseline.jtl';
 
 function App() {
+
   const [count, setCount] = useState(0)
   console.log('[App.tsx]', `Hello world from Electron ${process.versions.electron}!`)
+
   return (
     <div className='App'>
       <h1>Open Analysis</h1>
@@ -16,7 +22,7 @@ function App() {
         </a>
       </div>
       <div className='start-button'>
-        <button onClick={() => setCount((count) => count + 1)}>
+        <button onClick={() => uploadFile(filename)}>
           Analyze
         </button>
       </div>
