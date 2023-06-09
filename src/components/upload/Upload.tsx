@@ -1,4 +1,4 @@
-import { InfluxDB, ClientOptions, Point, HttpError } from '@influxdata/influxdb-client'
+import { InfluxDB, Point, ClientOptions, HttpError } from '@influxdata/influxdb-client'
 import { INFLUX_URL, INFLUX_TOKEN, INFLUX_ORG, INFLUX_BUCKET } from '../../env'
 import fs from 'fs';
 import readline from 'readline';
@@ -11,7 +11,10 @@ console.log('[App.tsx]', `Hello world from Electron ${process.versions.electron}
 async function Upload(filename: string): Promise<void> {
 
     const influxDB = new InfluxDB({ url: INFLUX_URL, token: INFLUX_TOKEN });
-    const writeApi = influxDB.getWriteApi(INFLUX_ORG, INFLUX_BUCKET);
+    const writeApi = influxDB.getWriteApi(INFLUX_ORG, INFLUX_BUCKET, 'ns');
+
+    console.log('Filename ::: ' + filename);
+
 
     try {
         const fileStream = fs.createReadStream(filename);
@@ -21,34 +24,48 @@ async function Upload(filename: string): Promise<void> {
             crlfDelay: Infinity
         });
 
+        let headers: string[] = [];
+        let points: Point[] = [];
+
+        try {
+            // Write data to InfluxDB
+            await writeApi.writePoints(points);
+            console.log('Connection success.');
+        } catch (error) {
+            console.log('Connection failed:', error);
+        }
+
+
         for await (const line of rl) {
+            if (headers.length === 0) {
+                // If headers array is empty, extract the headers from the first line
+                headers = line.split(',');
+                continue; // Skip the first line
+            }
+
             // Parse each line of the JTL file
-            const [timeStamp, elapsed, label, responseCode, responseMessage, threadName, dataType, success, bytes, grpThreads, allThreads, URL, Latency, Encoding, SampleCount, ErrorCount, Hostname, IdleTime, Connect] = line.split(',');
+            const values = line.split(',');
 
             // Create a new point
-            const point = new Point('jmeter_test1')
-                .timestamp(parseInt(timeStamp))
-                .tag('elapsed', elapsed)
-                .tag('label', label)
-                .tag('responseCode', responseCode)
-                .tag('responseMessage', responseMessage)
-                .tag('threadName', threadName)
-                .tag('dataType', dataType)
-                .tag('success', success)
-                .tag('bytes', bytes)
-                .tag('grpThreads', grpThreads)
-                .tag('allThreads', allThreads)
-                .tag('URL', URL)
-                .tag('Latency', Latency)
-                .tag('Encoding', Encoding)
-                .tag('SampleCount', SampleCount)
-                .tag('ErrorCount', ErrorCount)
-                .tag('Hostname', Hostname)
-                .tag('IdleTime', IdleTime)
-                .tag('Connect', Connect);
+            const point = new Point('measurement1').timestamp(parseInt(values[0]));
 
-            // Write the point to InfluxDB
-            writeApi.writePoint(point);
+            // Assign values to tags dynamically based on the headers
+            for (let i = 1; i < headers.length; i++) {
+                point.tag(headers[i], values[i]);
+            }
+
+            points.push(point);
+
+            // Upload data in batches of 1000 points
+            if (points.length >= 5000) {
+                await writeApi.writePoints(points);
+                points = [];
+            }
+        }
+
+        // Write any remaining points
+        if (points.length > 0) {
+            await writeApi.writePoints(points);
         }
 
         // Flush the write API to ensure all data is written

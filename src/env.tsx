@@ -1,4 +1,4 @@
-export const INFLUX_URL = 'https://us-west-2-1.aws.cloud2.influxdata.com';
-export const INFLUX_TOKEN = 'BN7ZaAF_f9Dia61hrBfQJ43latFdSVFDrUeAIaxyeBlUznixNzQ519uP18mt1GQ00Bv1vokQyTD3SoJ3gKYSTQ==';
-export const INFLUX_ORG = 'perfwise';
+export const INFLUX_URL = 'https://europe-west1-1.gcp.cloud2.influxdata.com';
+export const INFLUX_TOKEN = 'xKR7PAHoq04uQTNsklgTLcpAJqt1jrx24TcPHjWh-6-HfB3g9xcML834-NtmOEGTKPqnQPHa2D0Ep1I_YGCMdg==';
+export const INFLUX_ORG = 'eca6eae0ac7da740';
 export const INFLUX_BUCKET = 'jmeter';

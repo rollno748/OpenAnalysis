@@ -5,7 +5,7 @@ import uploadFile from './components/upload/Upload'
 
 
 
-const filename = 'C:\\workspace\\jmeter\\LATAM\\Merged\\Results\\Test3\\test3_baseline.jtl';
+const filename = 'C:\\Temp\\test.jtl';
 
 function App() {
 
