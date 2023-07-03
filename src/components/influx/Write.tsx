@@ -16,7 +16,7 @@ async function Write(filename: string, testId: string): Promise<void> {
 
         if (await validateConnection(writeApi)) {
             console.log("Connection established successfully !")
-            //await deleteAllData(influxClient, INFLUX_BUCKET, INFLUX_ORG);
+            await deleteMeasurement(influxClient, testId);
 
             const rl = await readLinesFromFile(filename);
 
@@ -101,6 +101,28 @@ async function deleteAllData(influxClient: InfluxDB, bucket: string, org: string
         console.log('Deleted all the from the bucket!');
     } catch (error) {
         console.log('Exception occurred while deleting data from the bucket: ', error);
+    }
+}
+
+async function deleteMeasurement(influxClient: InfluxDB, measurement: string) {
+    try {
+
+        const deleteUrl = `http://${INFLUX_URL}/api/v2/delete?org=${INFLUX_ORG}&bucket=${INFLUX_BUCKET}&predicate=_measurement%3D%22${measurement}%22`;
+        const deleteResponse = await fetch(deleteUrl, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Token ${INFLUX_TOKEN}`,
+            },
+        });
+
+        if (deleteResponse.ok) {
+            console.log(`Successfully deleted the "${measurement}" measurement.`);
+        } else {
+            throw new Error(`Failed to delete measurement: ${deleteResponse.statusText}`);
+        }
+        console.log(`Successfully deleted the "${measurement}" measurement.`);
+    } catch (error) {
+        console.error('Error deleting measurement:', error);
     }
 }
 
