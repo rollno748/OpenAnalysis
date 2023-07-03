@@ -22,7 +22,7 @@ function App() {
         </a>
       </div>
       <div className='start-button'>
-        <button onClick={() => uploadFile(filename)}>
+        <button onClick={() => uploadFile(filename, 'trial1')}>
           Analyze
         </button>
       </div>
