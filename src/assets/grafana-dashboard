@@ -1,0 +1,146 @@
+Total Vusers:
+
+SELECT max("maxActiveThreads") FROM testId WHERE "loadGenerator"=~ /$LG/ AND "testType"=~ /$TestType/ AND $timeFilter
+
+
+
+
+Tital Req:
+
+SELECT  count("responseTime") FROM testId WHERE "loadGenerator"=~ /$LG/ AND "testType"=~ /$TestType/ AND "projectName"=~ /$ProjectName/ AND $timeFilter fill(null)
+
+from(bucket: "${INFLUX_BUCKET}")
+  |> range($timeFilter)
+  |> filter(fn: (r) => r._measurement == testId and r.loadGenerator =~ /$LG/ and r.testType =~ /$TestType/ and r.projectName =~ /$ProjectName/)
+  |> count(column: "responseTime")
+  |> fill(value: null)
+
+
+TPS:
+
+SELECT  count("responseTime")/60 FROM testId WHERE "loadGenerator"=~ /$LG/ AND "testType"=~ /$TestType/ AND "projectName"=~ /$ProjectName/ AND $timeFilter GROUP BY time(1s) fill(null)
+
+from(bucket: "${INFLUX_BUCKET}")
+  |> range($timeFilter)
+  |> filter(fn: (r) => r._measurement == testId and r.loadGenerator =~ /$LG/ and r.testType =~ /$TestType/ and r.projectName =~ /$ProjectName/)
+  |> count(column: "responseTime")
+  |> map(fn: (r) => ({ r with _value: r._value / 60 }))
+  |> group(columns: ["_time"])
+  |> fill(value: null)
+
+
+PassPercent
+
+SELECT 100 - (100*sum("error"))/count("httpStatus") FROM testId WHERE "loadGenerator"=~ /$LG/ AND "testType"=~ /$TestType/ AND "projectName"=~ /$ProjectName/ AND $timeFilter fill(0)
+
+from(bucket: "${INFLUX_BUCKET}")
+  |> range($timeFilter)
+  |> filter(fn: (r) => r._measurement == testId and r.loadGenerator =~ /$LG/ and r.testType =~ /$TestType/ and r.projectName =~ /$ProjectName/)
+  |> sum(column: "error")
+  |> set(key: "_value", value: 100.0 - (100.0 * sum) / count(column: "httpStatus"))
+  |> fill(value: 0.0)
+
+
+Fail Percent:
+
+SELECT (100*sum("error"))/count("httpStatus") FROM testId WHERE "loadGenerator"=~ /$LG/ AND "testType"=~ /$TestType/ AND "projectName"=~ /$ProjectName/ AND $timeFilter fill(0)
+
+from(bucket: "${INFLUX_BUCKET}")
+  |> range($timeFilter)
+  |> filter(fn: (r) => r._measurement == testId and r.loadGenerator =~ /$LG/ and r.testType =~ /$TestType/ and r.projectName =~ /$ProjectName/)
+  |> sum(column: "error")
+  |> set(key: "_value", value: (100.0 * sum) / count(column: "httpStatus"))
+  |> fill(value: 0.0)
+
+
+
+Vusers vs TPS
+
+SELECT last("maxActiveThreads") FROM testId WHERE "loadGenerator"=~ /$LG/ AND "testType"=~ /$TestType/ AND "projectName"=~ /$ProjectName/ AND $timeFilter GROUP BY time(10s) fill(null)
+
+from(bucket: "${INFLUX_BUCKET}")
+  |> range($timeFilter)
+  |> filter(fn: (r) => r._measurement == testId and r.loadGenerator =~ /$LG/ and r.testType =~ /$TestType/ and r.projectName =~ /$ProjectName/)
+  |> last(column: "maxActiveThreads")
+  |> group(columns: ["_time"])
+  |> fill(value: null)
+
+
+SELECT count("responseTime")/10 FROM testId WHERE "loadGenerator"=~ /$LG/ AND "testType"=~ /$TestType/ AND "projectName"=~ /$ProjectName/ AND $timeFilter GROUP BY time(10s) fill(null)
+
+from(bucket: "${INFLUX_BUCKET}")
+  |> range($timeFilter)
+  |> filter(fn: (r) => r._measurement == testId and r.loadGenerator =~ /$LG/ and r.testType =~ /$TestType/ and r.projectName =~ /$ProjectName/)
+  |> count(column: "responseTime")
+  |> map(fn: (r) => ({ r with _value: r._value / 10 }))
+  |> group(columns: ["_time"])
+  |> fill(value: null)
+
+
+RT over time graph 
+
+SELECT mean("responseTime") FROM testId WHERE "loadGenerator"=~ /$LG/ AND "testType"=~ /$TestType/ AND "projectName"=~ /$ProjectName/ AND $timeFilter GROUP BY time(1s), requestName fill(null)
+
+from(bucket: "${INFLUX_BUCKET}")
+  |> range($timeFilter)
+  |> filter(fn: (r) => r._measurement == testId and r.loadGenerator =~ /$LG/ and r.testType =~ /$TestType/ and r.projectName =~ /$ProjectName/)
+  |> mean(column: "responseTime")
+  |> group(columns: ["_time", "requestName"])
+  |> fill(value: null)
+
+
+
+RT table:
+
+SELECT count(responseTime) as Count, mean(responseTime) as "Avg(ms)", min(responseTime) as "Min(ms)", max(responseTime) as "Max(ms)", percentile(responseTime, 90) as "90 Percentile(ms)", percentile(responseTime, 95) as "95 Percentile(ms)", count("responseTime")/60 as TPS, sum("error")/count("responseTime") as "Error% "  FROM testId WHERE "loadGenerator"=~ /$LG/ AND "testType"=~ /$TestType/ AND "projectName"=~ /$ProjectName/ AND $timeFilter GROUP BY requestName
+
+from(bucket: "${INFLUX_BUCKET}")
+  |> range($timeFilter)
+  |> filter(fn: (r) => r._measurement == testId and r.loadGenerator =~ /$LG/ and r.testType =~ /$TestType/ and r.projectName =~ /$ProjectName/)
+  |> group(columns: ["requestName"])
+  |> count(column: "responseTime")
+  |> mean(column: "responseTime")
+  |> min(column: "responseTime")
+  |> max(column: "responseTime")
+  |> percentile(column: "responseTime", q: 0.9)
+  |> percentile(column: "responseTime", q: 0.95)
+  |> map(fn: (r) => ({ r with TPS: r._value / 60.0 }))
+  |> map(fn: (r) => ({ r with "Error%": r._sum_error / r._count_responseTime }))
+
+
+
+Error Rate:
+
+SELECT sum("error")/10 FROM testId WHERE "loadGenerator"=~ /$LG/ AND "testType"=~ /$TestType/ AND "projectName"=~ /$ProjectName/ AND $timeFilter GROUP BY time(10s) fill(0)
+
+from(bucket: "${INFLUX_BUCKET}")
+  |> range($timeFilter)
+  |> filter(fn: (r) => r._measurement == testId and r.loadGenerator =~ /$LG/ and r.testType =~ /$TestType/ and r.projectName =~ /$ProjectName/)
+  |> sum(column: "error")
+  |> map(fn: (r) => ({ r with _value: r._value / 10 }))
+  |> group(columns: ["_time"])
+  |> fill(value: 0)
+
+
+
+HTTP Status
+
+SELECT count(httpStatus) as httpStatus FROM testId WHERE "loadGenerator"=~ /$LG/ AND "testType"=~ /$TestType/ AND "projectName"=~ /$ProjectName/ AND $timeFilter GROUP BY httpStatus, requestName
+
+from(bucket: "${INFLUX_BUCKET}")
+  |> range($timeFilter)
+  |> filter(fn: (r) => r._measurement == testId and r.loadGenerator =~ /$LG/ and r.testType =~ /$TestType/ and r.projectName =~ /$ProjectName/)
+  |> group(columns: ["httpStatus", "requestName"])
+  |> count(column: "httpStatus")
+
+
+Vuser vs RT Graph:
+
+SELECT last("maxActiveThreads") FROM testId WHERE "loadGenerator"=~ /$LG/ AND "testType"=~ /$TestType/ AND "projectName"=~ /$ProjectName/ AND $timeFilter GROUP BY time(10s) fill(null)
+
+from(bucket: "${INFLUX_BUCKET}")
+  |> range($timeFilter)
+  |> filter(fn: (r) => r._measurement == testId and r.loadGenerator =~ /$LG/ and r.testType =~ /$TestType/ and r.projectName =~ /$ProjectName/)
+  |> last(column: "maxActiveThreads")
+  |> group(columns: ["_time"])
+  |> fill(value: null)

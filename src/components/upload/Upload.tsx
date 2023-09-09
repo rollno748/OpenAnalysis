@@ -1,13 +1,11 @@
 import './../../assets/scss/upload.scss';
-import Write from './../influx/Write';
+import writeToSQLite from '../Sqlite/WriteToSQLite';
 
 async function Upload(filename: string, testId: string): Promise<void> {
-  try {
-    await Write(filename, testId);
-    console.log('File uploaded successfully.');
-  } catch (error) {
-    console.error('Error uploading file:', error);
-  }
+  console.log('Upload Button clicked')
+
+  await writeToSQLite(filename, testId);
+  // await Write(filename, testId);
 
 }
 

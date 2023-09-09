@@ -2,6 +2,7 @@ import nodeLogo from './assets/node.svg'
 import { useState } from 'react'
 import './assets/scss/App.scss'
 import uploadFile from './components/upload/Upload'
+import Write from './components/influx/Write';
 
 
 
@@ -10,7 +11,7 @@ const filename = 'C:\\Temp\\test.jtl';
 function App() {
 
   const [count, setCount] = useState(0)
-  console.log('[App.tsx]', `Hello world from Electron ${process.versions.electron}!`)
+  // console.log('[App.tsx]', `Hello world from Electron ${process.versions.electron}!`)
 
   return (
     <div className='App'>
@@ -22,7 +23,8 @@ function App() {
         </a>
       </div>
       <div className='start-button'>
-        <button onClick={() => uploadFile(filename, 'file1')}>
+        <button onClick={() => uploadFile(filename, 'july81')}>
+        {/* <button onClick={() => Write(filename, 'july81')}> */}
           Analyze
         </button>
       </div>

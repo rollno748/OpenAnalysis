@@ -1,5 +1,6 @@
 import { rmSync } from 'node:fs'
 import path from 'node:path'
+import yaml from 'yaml'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import electron from 'vite-plugin-electron'
@@ -8,13 +9,18 @@ import pkg from './package.json'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
+  const { readFileSync } = require('fs');
+  const configYaml = yaml.parse(readFileSync('./env.yaml', 'utf8'));
+  
   rmSync('dist-electron', { recursive: true, force: true })
-
   const isServe = command === 'serve'
   const isBuild = command === 'build'
   const sourcemap = isServe || !!process.env.VSCODE_DEBUG
-
+  
   return {
+    define: {
+      'import.meta.env.CONFIG': JSON.stringify(configYaml),
+    },
     resolve: {
       alias: {
         '@': path.join(__dirname, 'src')
