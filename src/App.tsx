@@ -1,41 +1,57 @@
+import React, { useState, useEffect } from 'react';
 import nodeLogo from './assets/node.svg'
-import { useState } from 'react'
+import bg1 from './assets/img/bg1.jpg';
+import bg2 from './assets/img/bg2.jpg';
+import bg3 from './assets/img/bg3.jpg';
+import './assets/scss/App.scss';
 import './assets/scss/App.scss'
-import uploadFile from './components/upload/Upload'
-import Write from './components/influx/Write';
 
-
-
-const filename = 'C:\\Temp\\test.jtl';
 
 function App() {
+  const [randomImage, setRandomImage] = useState('');
 
-  const [count, setCount] = useState(0)
-  // console.log('[App.tsx]', `Hello world from Electron ${process.versions.electron}!`)
+  useEffect(() => {
+    const imageFilenames = [bg1, bg2, bg3];
+    const randomIndex = Math.floor(Math.random() * imageFilenames.length);
+    const randomImageFilename = imageFilenames[randomIndex];
+    setRandomImage(randomImageFilename);
+
+
+    // Set the background image for the body
+    document.body.style.backgroundImage = `url(${randomImageFilename})`;
+
+    // Clean up by removing the background image when the component unmounts
+    return () => {
+      document.body.style.backgroundImage = '';
+    };
+
+  }, []);
+
+  const viewDashboard = () => {
+    // navigate('./components/dashboard');
+  };
 
   return (
     <div className='App'>
-      <h1>Open Analysis</h1>
-      <div className='logo-box'>
-        <a href='https://github.com/rollno748/OpenAnalysis' target='_blank'>
-          <img src='./vite.svg' className='logo vite' alt='Electron + Vite logo' />
-          {/* <img src='./electron.svg' className='logo electron' alt='Electron + Vite logo' /> */}
-        </a>
+      <div className="main-card">
+        <h1>Open Analysis</h1>
+        <div className='logo-box'>
+          <a href='https://github.com/rollno748/OpenAnalysis' target='_blank'>
+            <img src='./vite.svg' className='logo vite' alt='Electron + Vite logo' />
+          </a>
+        </div>
+        <div className='start-button'>
+          <button onClick={() => viewDashboard()}>
+            Start
+          </button>
+        </div>
+        <p className='button-caption'>
+          Click the start button to begin
+        </p>
+        <div className='flex-center'>
+          Powered by <img style={{ width: '1.6em' }} src={nodeLogo} alt='Node logo' />
+        </div>
       </div>
-      <div className='start-button'>
-        <button onClick={() => uploadFile(filename, 'july81')}>
-        {/* <button onClick={() => Write(filename, 'july81')}> */}
-          Analyze
-        </button>
-      </div>
-      <p className='button-caption'>
-        Click the start button to begin
-      </p>
-      <div className='flex-center'>
-        Powered by <img style={{ width: '1.6em' }} src={nodeLogo} alt='Node logo' />
-      </div>
-
-      {/* <Update /> */}
     </div>
   )
 }

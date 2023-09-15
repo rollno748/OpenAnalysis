@@ -50,3 +50,17 @@
   align-items: center;
   justify-content: center;
 }
+
+body {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.main-card {
+  width: 760px;
+  height: 380px;
+  border-radius: 27px;
+  background: #3062bfe3;
+  box-shadow: 15px 10px 25px #bebebe, 0px 0px 0px #ffffff;
+}

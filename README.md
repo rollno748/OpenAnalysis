@@ -86,3 +86,5 @@ export default {
 - https://github.com/NimbleNitesh/HoverWorld
 - https://reactjsexample.com/mern-stack-web-development-with-crud-application-using-refine-framework/
 - https://www.electronjs.org/docs/latest/
+- https://github.com/electron-vite/electron-vite-react
+- https://github.com/electron-vite/electron-vite-react/blob/main/src/components/update/README.md

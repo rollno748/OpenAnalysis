@@ -4,7 +4,7 @@ import './../../assets/scss/dashboard.scss'
 console.log('[App.tsx]', `Hello world from Electron ${process.versions.electron}!`)
 
 function Dashboard() {
-  const [count, setCount] = useState(0)
+  
   return (
     <div className='App'>
       <div className='logo-box'>
@@ -28,8 +28,6 @@ function Dashboard() {
       <div className='flex-center'>
         Place static files into the<code>/public</code> folder <img style={{ width: '5em' }} src={nodeLogo} alt='Node logo' />
       </div>
-
-      {/* <Update /> */}
     </div>
   )
 }
