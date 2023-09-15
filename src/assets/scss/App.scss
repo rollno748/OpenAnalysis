@@ -13,13 +13,13 @@
 .logo {
   position: absolute;
   left: calc(50% - 4.5em);
-  height: 6em;
+  height: 5.5em;
   padding: 1.5em;
   will-change: filter;
-  transition: filter 600ms;
+  transition: filter 500ms;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #07ce18aa);
+  filter: drop-shadow(0 0 1em #0dec1fce);
 }
 
 @keyframes logo-spin {
@@ -61,6 +61,6 @@ body {
   width: 760px;
   height: 380px;
   border-radius: 27px;
-  background: #3062bfe3;
+  background: rgb(135 56 128 / 77%);
   box-shadow: 15px 10px 25px #bebebe, 0px 0px 0px #ffffff;
 }

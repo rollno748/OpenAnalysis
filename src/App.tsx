@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import nodeLogo from './assets/node.svg'
+import nodeLogo from './assets/img/node.svg'
 import bg1 from './assets/img/bg1.jpg';
 import bg2 from './assets/img/bg2.jpg';
 import bg3 from './assets/img/bg3.jpg';
@@ -37,19 +37,16 @@ function App() {
         <h1>Open Analysis</h1>
         <div className='logo-box'>
           <a href='https://github.com/rollno748/OpenAnalysis' target='_blank'>
-            <img src='./vite.svg' className='logo vite' alt='Electron + Vite logo' />
+            <img src='./src/assets/img/github.svg' className='logo vite' alt='Electron + Vite logo' />
           </a>
         </div>
         <div className='start-button'>
-          <button onClick={() => viewDashboard()}>
-            Start
-          </button>
+          <button onClick={() => viewDashboard()}>Start</button>
         </div>
         <p className='button-caption'>
           Click the start button to begin
         </p>
-        <div className='flex-center'>
-          Powered by <img style={{ width: '1.6em' }} src={nodeLogo} alt='Node logo' />
+        <div className='flex-center'>Powered by <img style={{ width: '1.6em' }} src={nodeLogo} alt='Node logo' />
         </div>
       </div>
     </div>
