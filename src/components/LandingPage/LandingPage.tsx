@@ -13,6 +13,7 @@ function LandingPage(){
 
     const handleOpenPopup = () => {
       setShowPopup(true);
+      <Popup />
     };
 
     const handleSelect = (selectedOption: Option) => {
@@ -48,13 +49,6 @@ function LandingPage(){
             </div>
             <div className='start-button'>
             <button onClick={handleOpenPopup}>Let's Begin</button>
-            <Popup
-              show={showPopup}
-              onHide={() => setShowPopup(false)}
-              options={['JMeter', 'K6', 'Neoload', 'LoadRunner']}
-              onSelect={handleSelect}
-            />
-            {/* <button onClick={() => console.log("Button Clicked")}>Let's Begin</button> */}
             </div>
             <p className='button-caption'>An Universal anlaysis tool</p>
             <div className='flex-center'>Powered by <img style={{ width: '1.6em' }} src={nodeLogo} alt='Node logo' /></div>
